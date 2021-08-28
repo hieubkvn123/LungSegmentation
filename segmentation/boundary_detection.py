@@ -32,7 +32,7 @@ def lung_boundary_detection(img, preprocessing='bcet'):
 
     hull_areas = np.array(hull_areas)
     hull_areas = np.sort(hull_areas)
-    top_areas = np.array(hull_areas)[-4:-1]
+    top_areas = np.array(hull_areas)[-5:-1]
     # 3. Draw contours and hull result
     drawing = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
     for i in range(len(contours)):
