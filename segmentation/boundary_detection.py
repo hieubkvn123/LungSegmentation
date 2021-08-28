@@ -13,11 +13,6 @@ def lung_boundary_detection(img, preprocessing='clahe_lab'):
     else:
         raise Exception('Invalid preprocessing method')
 
-    # Filter contours covering from 25% to 50% of image area
-    H, W = img.shape[:2]
-    contour_min_size = 0.1 * (H * W)
-    contour_max_size = 0.5 * (H * W)
-
     # 1. Otsu thresholding
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
@@ -51,4 +46,4 @@ def lung_boundary_detection(img, preprocessing='clahe_lab'):
         cv2.drawContours(drawing, contours, i, color)
         cv2.drawContours(drawing, hull_list, i, color)
 
-    return drawing
+    return drawing, thresh

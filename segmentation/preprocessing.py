@@ -27,11 +27,11 @@ def clahe_lab(img):
 # CLAHE
 def clahe(img):
     # Median blurring
-    img = cv2.medianBlur(img, 3)
+    img = cv2.medianBlur(img, 5)
 
     # Apply CLAHE on whole image
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    clahe = cv2.createCLAHE(clipLimit=5, tileGridSize=(8,8))
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
     output = clahe.apply(gray)
 
     img[:,:,0] = output
