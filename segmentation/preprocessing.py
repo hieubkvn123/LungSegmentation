@@ -13,7 +13,7 @@ def clahe_lab(img):
     l, a, b = cv2.split(lab)
 
     # Apply CLAHE to l channel
-    clahe = cv2.createCLAHE(clipLimit=5.0)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(16, 16))
     l = clahe.apply(l)
 
     # Merge back to LAB
@@ -27,11 +27,11 @@ def clahe_lab(img):
 # CLAHE
 def clahe(img):
     # Median blurring
-    img = cv2.medianBlur(img, 5)
+    img = cv2.medianBlur(img, 7)
 
     # Apply CLAHE on whole image
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
     output = clahe.apply(gray)
 
     img[:,:,0] = output

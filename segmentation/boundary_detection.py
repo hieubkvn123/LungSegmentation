@@ -3,7 +3,7 @@ import numpy as np
 
 from .preprocessing import *
 
-def lung_boundary_detection(img, preprocessing='clahe_lab'): 
+def lung_boundary_detection(img, preprocessing='bcet'): 
     if(preprocessing == 'bcet'):
         img = bcet(img)
     elif(preprocessing == 'clahe'):
@@ -15,7 +15,7 @@ def lung_boundary_detection(img, preprocessing='clahe_lab'):
 
     # 1. Otsu thresholding
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
+    ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_OTSU)
 
     # 2. Convex Hull formation
     # 2.1. Find contours
@@ -32,11 +32,12 @@ def lung_boundary_detection(img, preprocessing='clahe_lab'):
 
     hull_areas = np.array(hull_areas)
     hull_areas = np.sort(hull_areas)
-    top_areas = np.array(hull_areas)[-3:-1]
+    top_areas = np.array(hull_areas)[-4:-1]
     # 3. Draw contours and hull result
     drawing = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
     for i in range(len(contours)):
-        color = (np.random.randint(0, 256), np.random.randint(0, 256), np.random.randint(0,256))
+        color = (np.random.randint(127, 256), np.random.randint(127, 256),
+                 np.random.randint(127,256))
 
         # Filter contour by area
         cnt_area = cv2.contourArea(hull_list[i])
@@ -44,6 +45,6 @@ def lung_boundary_detection(img, preprocessing='clahe_lab'):
             continue
 
         cv2.drawContours(drawing, contours, i, color)
-        cv2.drawContours(drawing, hull_list, i, color)
+        cv2.drawContours(drawing, hull_list, i, color, thickness=cv2.FILLED)
 
     return drawing, thresh
