@@ -3,7 +3,7 @@ import numpy as np
 
 from .preprocessing import *
 
-def lung_boundary_detection(img, preprocessing='bcet'): 
+def lung_boundary_detection(img, preprocessing='clahe_lab'): 
     if(preprocessing == 'bcet'):
         img = bcet(img)
     elif(preprocessing == 'clahe'):
