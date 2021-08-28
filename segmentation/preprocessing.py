@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Contrast Limited Adaptive Histogram Equalization (CLAHE)
-def clahe(img):
+def clahe_lab(img):
     # Median blurring
     img = cv2.medianBlur(img, 3)
 
@@ -13,7 +13,7 @@ def clahe(img):
     l, a, b = cv2.split(lab)
 
     # Apply CLAHE to l channel
-    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(5, 5))
+    clahe = cv2.createCLAHE(clipLimit=5.0)
     l = clahe.apply(l)
 
     # Merge back to LAB
@@ -21,6 +21,22 @@ def clahe(img):
 
     # Convert back to BGR
     img = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+
+    return img
+
+# CLAHE
+def clahe(img):
+    # Median blurring
+    img = cv2.medianBlur(img, 3)
+
+    # Apply CLAHE on whole image
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    clahe = cv2.createCLAHE(clipLimit=5, tileGridSize=(8,8))
+    output = clahe.apply(gray)
+
+    img[:,:,0] = output
+    img[:,:,1] = output
+    img[:,:,2] = output
 
     return img
 

@@ -1,13 +1,15 @@
 import cv2
 import numpy as np
 
-from .preprocessing import clahe, bcet
+from .preprocessing import *
 
-def lung_boundary_detection(img, preprocessing='clahe'):
+def lung_boundary_detection(img, preprocessing='clahe_lab'): 
     if(preprocessing == 'bcet'):
         img = bcet(img)
     elif(preprocessing == 'clahe'):
         img = clahe(img)
+    elif(preprocessing == 'clahe_lab'):
+        img = clahe_lab(img)
     else:
         raise Exception('Invalid preprocessing method')
 
