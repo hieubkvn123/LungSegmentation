@@ -132,6 +132,11 @@ dmypy.json
 data/
 data/*
 
+# Ignore tensorflow hdf5 checkpoints
+*.h5
+*.hdf5
+*.pt
+
 # Ignore model folders
 checkpoints
 checkpoints/*

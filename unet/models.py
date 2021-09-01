@@ -53,8 +53,7 @@ def build_unet_model():
 
     upconv_4_1 = Conv2D(64, kernel_size=2, padding='same', activation='relu')(up4)
     upconv_4_2 = Conv2D(64, kernel_size=3, padding='same', activation='relu')(upconv_4_1)
-    upconv_4_3 = Conv2D(2, kernel_size=3, padding='same', activation='relu')(upconv_4_2)
-    output = Softmax(axis=3)(upconv_4_3)
+    output = Conv2D(1, kernel_size=3, padding='same')(upconv_4_2)
 
     model = Model(inputs=inputs, outputs=output, name='UNet-Lung-Segmentation')
     return model

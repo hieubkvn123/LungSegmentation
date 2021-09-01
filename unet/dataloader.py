@@ -65,6 +65,8 @@ class DataLoader:
 
     def get_train_val_datasets(self):
         X_train, X_test, Y_train, Y_test = train_test_split(self.image_files, self.mask_files, test_size=self.val_ratio)
+        self.train_steps = len(X_train) // self.batch_size + 1
+        self.val_steps = len(X_test) // self.batch_size + 1
 
         train_dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train))
         train_dataset = train_dataset.map(DataLoader.parse_fn)
