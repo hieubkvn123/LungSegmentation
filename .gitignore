@@ -140,3 +140,7 @@ data/*
 # Ignore model folders
 checkpoints
 checkpoints/*
+
+# Ignore unet's gifs
+unet/gifs
+unet/gifs/*
