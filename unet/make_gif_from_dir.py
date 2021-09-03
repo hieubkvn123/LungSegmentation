@@ -18,7 +18,7 @@ print('[INFO] Creating gif from image directory ...')
 for ext in extensions:
     image_paths += glob.glob(os.path.join(args['dir'], f'*.{ext}'))
 
-image_paths = {int(x.split('/')[-1].split('.')[0]):x for x in image_paths}
+image_paths = {x.split('/')[-1].split('.')[0] : x for x in image_paths}
 
 with tqdm.tqdm(total=len(image_paths)) as pbar:
     for filename in sorted(image_paths):
