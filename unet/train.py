@@ -1,4 +1,5 @@
 import os
+import glob
 import tqdm
 import numpy as np
 import tensorflow as tf
@@ -7,6 +8,7 @@ from tensorflow.keras.losses import BinaryCrossentropy
 
 from dataloader import DataLoader
 from models import build_unet_model
+from custom_callbacks import GifCreator
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -42,7 +44,8 @@ def val_step(model, batch):
 
     return loss
 
-def train(model, train_dataset, val_dataset, save_path='checkpoints', epochs=100, lr=0.0001, steps_per_epoch=50, val_steps=10, save_steps=5):
+def train(model, train_dataset, val_dataset, save_path='checkpoints', 
+        epochs=100, lr=0.0001, steps_per_epoch=50, val_steps=10, save_steps=5, callbacks=None):
     if(not os.path.exists(save_path)):
         os.mkdir(save_path)
         print('Checkpoint path created')
@@ -70,10 +73,17 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints', epochs=100
                 pbar.set_postfix({'val_loss' : f'{val_loss:.4f}'})
                 pbar.update(1)
 
+        # Save models
         if((i + 1) % save_steps == 0):
             print('Checkpointing weights ...')
             model.save_weights(f'{save_path}/model.weights.hdf5')
             
+        # Callbacks
+        if(callbacks is not None):
+            for callback in callbacks:
+                callback.reset_model(model)
+                callback()
+
 model = build_unet_model()
 data_dir = args['data'] 
 batch_size = args['batch_size']
@@ -82,10 +92,15 @@ epochs = args['epochs']
 lr = args['lr']
 save_path = args['save_path']
 
+# Create data loader
 loader = DataLoader(data_dir, batch_size, test_ratio)
 train_ds, val_ds = loader.get_train_val_datasets()
 steps_per_epoch, val_steps = loader.train_steps, loader.val_steps
 
+# Create callbacks
+test_file = np.random.choice(glob.glob('../data/LungSegments/images/*.png'))
+gif_creator = GifCreator(test_file)
+
 train(model, train_ds, val_ds, epochs=epochs, lr=lr, save_path=save_path, 
-        steps_per_epoch=steps_per_epoch, val_steps=val_steps)
+        steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[gif_creator])
 
