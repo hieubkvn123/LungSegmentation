@@ -45,7 +45,11 @@ class DataLoader:
     def map_fn(img, size=256):
         img = tf.image.resize(img, [size, size])
         img = tf.clip_by_value(img, 0, 255)
-        img = img / 127.5 - 1.0
+        #img = img / 127.5 - 1.0
+        
+        mean = tf.math.reduce_mean(img)
+        std = tf.math.reduce_std(img)
+        img = (img - mean) / std
 
         return img
 
@@ -70,12 +74,15 @@ class DataLoader:
 
         train_dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train))
         train_dataset = train_dataset.map(DataLoader.parse_fn)
+        train_dataset = train_dataset.repeat()
         train_dataset = train_dataset.batch(self.batch_size)
-        train_dataset = train_dataset.repeat(None).prefetch(1)
+        train_dataset = train_dataset.take(self.train_steps)
 
         val_dataset = tf.data.Dataset.from_tensor_slices((X_test, Y_test))
         val_dataset = val_dataset.map(DataLoader.parse_fn)
+        val_dataset = val_dataset.repeat()
         val_dataset = val_dataset.batch(self.batch_size)
-        val_dataset = val_dataset.repeat(None).prefetch(1)
+        val_dataset = val_dataset.take(self.val_steps)
 
         return train_dataset, val_dataset
+

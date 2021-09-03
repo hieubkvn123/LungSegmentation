@@ -16,14 +16,14 @@ parser.add_argument('--data', type=str, required=True, help='Path to the data di
 parser.add_argument('--epochs', type=int, required=False, default=100, help='Number of training iterations')
 parser.add_argument('--batch-size', type=int, required=False, default=16, help='Number of instances per batch')
 parser.add_argument('--val-ratio', type=float, required=False, default=0.2, help='Ratio of validation/total dataset')
-parser.add_argument('--lr', type=float, required=False, default=0.0005, help='Learning rate')
+parser.add_argument('--lr', type=float, required=False, default=0.00005, help='Learning rate')
 parser.add_argument('--save-path', type=str, required=False, default='../checkpoints', help='Path at which model and weights are saved')
 args = vars(parser.parse_args())
 
 @tf.function
 def train_step(model, opt, batch):
     with tf.GradientTape() as tape:
-        bce = BinaryCrossentropy(from_logits=True)
+        bce = BinaryCrossentropy(from_logits=False)
         images, masks = batch
 
         predicted_masks = model(images, training=True)
@@ -36,7 +36,7 @@ def train_step(model, opt, batch):
 
 @tf.function
 def val_step(model, batch):
-    bce = BinaryCrossentropy(from_logits=True)
+    bce = BinaryCrossentropy(from_logits=False)
     images, masks = batch
     
     predictions = model(images, training=False)
@@ -49,15 +49,13 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
     if(not os.path.exists(save_path)):
         os.mkdir(save_path)
         print('Checkpoint path created')
-
         model.save(f'{save_path}/model.h5')
 
     optimizer = Adam(lr=lr, amsgrad=True)
 
     for i in range(epochs):
         with tqdm.tqdm(total=steps_per_epoch) as pbar:
-            for j in range(steps_per_epoch):
-                batch = next(iter(train_dataset))
+            for batch in train_dataset:
                 train_loss = train_step(model, optimizer, batch)
                 train_loss = train_loss.numpy()
 
@@ -65,8 +63,7 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
                 pbar.update(1)
             
         with tqdm.tqdm(total=val_steps, colour='green') as pbar:
-            for j in range(val_steps):
-                batch = next(iter(val_dataset))
+            for batch in val_dataset:
                 val_loss = val_step(model, batch)
                 val_loss = val_loss.numpy()
 

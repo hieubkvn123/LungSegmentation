@@ -8,6 +8,13 @@ class GifCreator:
     def __init__(self, test_file, output_dir='gifs', fps=15):
         self.test_file = test_file
         self.image = cv2.imread(self.test_file, cv2.COLOR_BGR2RGB)
+        if(len(self.image.shape) < 3):
+            img = self.image
+            self.image = np.zeros((self.image.shape[0], self.image.shape[1], 3))
+            self.image[:, :, 0] = img
+            self.image[:, :, 1] = img
+            self.image[:, :, 2] = img
+
         self.image = cv2.resize(self.image, (256, 256))
         self.image = (self.image - 127.5)/127.5
         self.output_dir = output_dir
@@ -28,9 +35,10 @@ class GifCreator:
         if(self.model is not None):
             self.counter += 1
             output = self.model.predict(np.array([self.image]))
-            output = tf.math.sigmoid(output)
-            output = output.numpy()
             output = output[0]
+            output = output * 255.0
+            output = output.astype(np.uint8)
+            print(np.max(output), np.min(output))
 
             output_file = f'{self.output_dir}/output_{self.counter}.png'
             cv2.imwrite(output_file, output)
