@@ -3,6 +3,7 @@ import cv2
 import glob
 import numpy as np
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 class GifCreator:
     def __init__(self, test_file, output_dir='gifs', fps=15):
@@ -41,7 +42,13 @@ class GifCreator:
             output = output.astype(np.uint8)
 
             output_file = f'{self.output_dir}/{self.counter}.png'
-            cv2.imwrite(output_file, output)
+            fig, ax = plt.subplots(1, 2, figsize=(15, 8))
+            ax[0].imshow(self.image)
+            ax[0].set_title('Input Image')
+        
+            ax[1].imshow(output)
+            ax[1].set_title('Segmentation map')
+            plt.savefig(output_file)
 
     def reset_state(self, state):
         self.model = state['model']

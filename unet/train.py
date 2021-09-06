@@ -56,7 +56,7 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
     train_losses = []
     val_losses = []
     for i in range(epochs):
-        print()
+        print(f'Epoch #[{i+1}/{epochs}]')
         with tqdm.tqdm(total=steps_per_epoch) as pbar:
             for batch in train_dataset:
                 train_loss = train_step(model, optimizer, batch)
