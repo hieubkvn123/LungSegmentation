@@ -6,6 +6,7 @@ import tensorflow as tf
 
 class GifCreator:
     def __init__(self, test_file, output_dir='gifs', fps=15):
+        self.stop_training=False
         self.test_file = test_file
         self.image = cv2.imread(self.test_file, cv2.COLOR_BGR2RGB)
         if(len(self.image.shape) < 3):
@@ -38,13 +39,36 @@ class GifCreator:
             output = output[0]
             output = output * 255.0
             output = output.astype(np.uint8)
-            print(np.max(output), np.min(output))
 
-            output_file = f'{self.output_dir}/output_{self.counter}.png'
+            output_file = f'{self.output_dir}/{self.counter}.png'
             cv2.imwrite(output_file, output)
 
-    def reset_model(self, model):
-        self.model = model
+    def reset_state(self, state):
+        self.model = state['model']
 
     def __call__(self):
         self.log_output(self.model)
+
+class EarlyStopping:
+    def __init__(self, patience, monitor='mean_val_loss'):
+        self.stop_training = False
+        self.patience = patience
+        self.monitor = monitor
+        self.losses = []
+
+    @staticmethod
+    def _overfitting(losses, patience):
+        head = losses[-patience:]
+
+        return sorted(head) == head
+
+    def reset_state(self, state):
+        if(self.monitor not in state):
+            raise Exception(f'"{self.monitor}" monitor is not in state dict ...')
+
+        self.losses.append(state[self.monitor])
+        
+    def __call__(self):
+        if(EarlyStopping._overfitting(self.losses, self.patience)):
+            self.stop_training = True
+

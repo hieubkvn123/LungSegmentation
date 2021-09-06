@@ -8,7 +8,7 @@ from tensorflow.keras.losses import BinaryCrossentropy
 
 from dataloader import DataLoader
 from models import build_unet_model
-from custom_callbacks import GifCreator
+from custom_callbacks import GifCreator, EarlyStopping
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -53,22 +53,31 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
 
     optimizer = Adam(lr=lr, amsgrad=True)
 
+    train_losses = []
+    val_losses = []
     for i in range(epochs):
         with tqdm.tqdm(total=steps_per_epoch) as pbar:
             for batch in train_dataset:
                 train_loss = train_step(model, optimizer, batch)
                 train_loss = train_loss.numpy()
 
+                train_losses.append(train_loss)
                 pbar.set_postfix({'train_loss' : f'{train_loss:.4f}'})
                 pbar.update(1)
-            
+           
+        print()
         with tqdm.tqdm(total=val_steps, colour='green') as pbar:
             for batch in val_dataset:
                 val_loss = val_step(model, batch)
                 val_loss = val_loss.numpy()
 
+                val_losses.append(val_loss)
                 pbar.set_postfix({'val_loss' : f'{val_loss:.4f}'})
                 pbar.update(1)
+
+        # Compute mean losses
+        mean_train_loss = np.array(train_losses).mean()
+        mean_val_loss = np.array(val_losses).mean()
 
         # Save models
         if((i + 1) % save_steps == 0):
@@ -78,8 +87,15 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
         # Callbacks
         if(callbacks is not None):
             for callback in callbacks:
-                callback.reset_model(model)
+                callback.reset_state({
+                    'model' : model,
+                    'mean_train_loss' : mean_train_loss,
+                    'mean_val_loss' : mean_val_loss
+                })
                 callback()
+
+                if(callback.stop_training):
+                    break
 
 model = build_unet_model()
 data_dir = args['data'] 
@@ -97,7 +113,8 @@ steps_per_epoch, val_steps = loader.train_steps, loader.val_steps
 # Create callbacks
 test_file = np.random.choice(glob.glob('../data/LungSegments/images/*.png'))
 gif_creator = GifCreator(test_file)
+early_stop = EarlyStopping(monitor='mean_val_loss', patience=2)
 
 train(model, train_ds, val_ds, epochs=epochs, lr=lr, save_path=save_path, 
-        steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[gif_creator])
+        steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[gif_creator, early_stop])
 
