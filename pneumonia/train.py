@@ -65,6 +65,8 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
     if(not os.path.exists(save_path)):
         os.mkdir(save_path)
         print('Checkpoint path created')
+
+    if(not os.path.exists(f'{save_path}/vgg.h5')):
         model.save(f'{save_path}/vgg.h5')
 
     optimizer = Adam(lr=lr, amsgrad=True)
