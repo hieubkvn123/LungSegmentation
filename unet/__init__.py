@@ -21,7 +21,7 @@ class UnetSegmenter:
 
         return img_norm
 
-    def visualize_prediction(self, img, out_file='output.png'):
+    def get_mask(self, img, threshold=0.60):
         # 1.1. Preprocess image
         img = self.img_preprocess(img)
 
@@ -30,6 +30,12 @@ class UnetSegmenter:
         pred[pred >= 0.75] = 1.0
         pred[pred < 0.75] = 0.0
         pred = (pred * 255.0).astype(np.uint8)
+
+        return pred
+
+    def visualize_prediction(self, img, out_file='output.png'):
+        # 1. Generate prediction
+        pred = self.get_mask(img, threshold=0.75)
 
         # 2.1. Find contours
         contours, _ = cv2.findContours(pred, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
