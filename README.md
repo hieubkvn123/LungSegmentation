@@ -23,6 +23,9 @@ This repository makes use of the preprocessing pipeline suggested by the "Lung b
 ![Lung segmentation CLAHE-LAB](./media/lungseg_opencv_clahe_lab.png)
 
 # Lung segmentation with deep learning approache.
+## Dataset
+The dataset to train U-net in this repository is taken from this [github](https://github.com/IlliaOvcharenko/lung-segmentation) repository.
+
 ## U-net training
 To initiate training of U-Net for segmentation, go into unet directory and run train.py in the following way :
 ```console
