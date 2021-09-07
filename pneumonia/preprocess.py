@@ -37,10 +37,10 @@ class Preprocessor:
 
         return output
 
-img = cv2.imread('../images/test3.png')
-img = cv2.resize(img, (256, 256))
+#img = cv2.imread('../images/test3.png')
+#img = cv2.resize(img, (256, 256))
 
-preprocessor = Preprocessor('../checkpoints/model.h5', '../checkpoints/model.weights.hdf5')
-output = preprocessor.lung_region_normalization(img)
-output = (output * 255.0).astype(np.uint8)
-cv2.imwrite('output.png', output)
+#preprocessor = Preprocessor('../checkpoints/model.h5', '../checkpoints/model.weights.hdf5')
+#output = preprocessor.lung_region_normalization(img)
+#output = (output * 255.0).astype(np.uint8)
+#cv2.imwrite('output.png', output)
