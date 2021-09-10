@@ -40,6 +40,10 @@ class DataLoader:
         img = tf.image.resize(img, [size, size])
         img = tf.clip_by_value(img, 0, 255)
         
+        mean = tf.math.reduce_mean(img)
+        std = tf.math.reduce_std(img)
+        img = (img - mean) / std
+
         return img
 
     @staticmethod
@@ -56,7 +60,7 @@ class DataLoader:
     def get_train_val_datasets(self):
         X_train, X_test, Y_train, Y_test = train_test_split(self.train_img_files, self.train_classes, test_size=self.val_ratio, random_state=4001)
         self.train_steps = len(X_train) // self.batch_size + 1
-        self.val_steps = len(X_train) // self.batch_size + 1
+        self.val_steps = len(X_test) // self.batch_size + 1
 
         train_dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train))
         train_dataset = train_dataset.map(DataLoader.parse_fn)
