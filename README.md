@@ -29,17 +29,21 @@ The dataset to train U-net in this repository is taken from this [github](https:
 ## U-net training
 To initiate training of U-Net for segmentation, go into unet directory and run train.py in the following way :
 ```console
-	python3 train.py --data <data_dir>
-					--epochs <number_training_iter>
-					--batch_size <batch_size>
-					--val-ratio <ratio_of_validation_set>
-					--lr <learning_rate>
-					--save-path <checkpoint_dir>
+       python3 train.py --data <data_dir>
+			--epochs <number_training_iter>
+			--batch_size <batch_size>
+			--val-ratio <ratio_of_validation_set>
+			--lr <learning_rate>
+			--save-path <checkpoint_dir>
+			--log-dir <log_dir>
 ```
 
-Where "data_dir" is the data directory containing two sub-directories "images" and "masks". "save_path" is the checkpoint directory in which two files will be produced :
-	* model.weights.hdf5 : model weights file.
-	* model.h5 : model structure
+Where :
+ * "data_dir" is the data directory containing two sub-directories "images" and "masks". 
+ * "save_path" is the checkpoint directory in which two files will be produced :
+   * model.weights.hdf5 : model weights file.
+   * model.h5 : model structure
+ * "log_dir" is the directory at which training info is store"
 
 After successful run of the training script, the terminal should appear as followed :
 ![Training log unet](./media/unet_training_log.png)

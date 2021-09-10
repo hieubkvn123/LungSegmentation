@@ -18,6 +18,7 @@ parser.add_argument('--batch-size', type=int, required=False, default=16, help='
 parser.add_argument('--val-ratio', type=float, required=False, default=0.2, help='Ratio of validation/total dataset')
 parser.add_argument('--lr', type=float, required=False, default=0.00005, help='Learning rate')
 parser.add_argument('--save-path', type=str, required=False, default='../checkpoints', help='Path at which model and weights are saved')
+parser.add_argument('--log-dir', type=str, required=False, default='../checkpoints', help='Base directory to store training logs')
 args = vars(parser.parse_args())
 
 @tf.function
@@ -117,7 +118,7 @@ steps_per_epoch, val_steps = loader.train_steps, loader.val_steps
 test_file = np.random.choice(glob.glob('../data/LungSegments/images/*.png'))
 gif_creator = GifCreator(test_file)
 early_stop = EarlyStopping(monitor='mean_val_loss', patience=2)
-info_logger = InfoLogger('../checkpoints', 'lung-segmentation')
+info_logger = InfoLogger(args['log_dir'], 'lung-segmentation')
 
 train(model, train_ds, val_ds, epochs=epochs, lr=lr, save_path=save_path, 
         steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[gif_creator, early_stop, info_logger])
