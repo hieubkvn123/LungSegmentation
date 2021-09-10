@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 from plotly.subplots import make_subplots
 
 import glob
+import numpy as np
 import pandas as pd
 
 from dash.dependencies import Input, Output
@@ -31,17 +32,21 @@ app.layout = html.Div(layout)
               [Input('graph-update', 'n_intervals')])
 def update_graph(n):
     data = []
+    range_y_axes = {}
+
     fig = make_subplots(rows=len(graph_names), 
             cols=1,
-            vertical_spacing=0.1,
             subplot_titles=subplot_titles)
+    
     for csv_file in csv_files:
         data.append(pd.read_csv(csv_file))
 
     for i, d in enumerate(data):
         t = list(range(len(d)))
-        max_y = 0
-    
+        min_y = np.min(data[i].values[:, 1:]) * 0.95
+        max_y = np.max(data[i].values[:, 1:]) * 1.05
+        range_y_axes[i] = [min_y, max_y]
+
         for col in list(d.columns[1:]):
             fig.add_trace(
                 go.Scatter(
@@ -57,6 +62,8 @@ def update_graph(n):
     
     for i in range(len(data)):
         fig.update_xaxes(range=[-1, len(data[i])], row=i+1, col=1)
+        fig.update_yaxes(range=range_y_axes[i], row=i+1, col=1)
+
     fig.update_layout(height=600*len(data), title_text=log_name)
 
     return fig
