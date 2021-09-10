@@ -29,13 +29,13 @@ The dataset to train U-net in this repository is taken from this [github](https:
 ### 2. U-net training
 To initiate training of U-Net for segmentation, go into unet directory and run train.py in the following way :
 ```console
-       python3 train.py --data <data_dir>
-			--epochs <number_training_iter>
-			--batch_size <batch_size>
-			--val-ratio <ratio_of_validation_set>
-			--lr <learning_rate>
-			--save-path <checkpoint_dir>
-			--log-dir <log_dir>
+python3 train.py --data <data_dir>
+		--epochs <number_training_iter>
+		--batch_size <batch_size>
+		--val-ratio <ratio_of_validation_set>
+		--lr <learning_rate>
+		--save-path <checkpoint_dir>
+		--log-dir <log_dir>
 ```
 
 Where :
@@ -47,6 +47,16 @@ Where :
 
 After successful run of the training script, the terminal should appear as followed :
 ![Training log unet](./media/unet_training_log.png)
+
+### 3. Training info dash board
+To view training info (losses, accuracies) in real time. Run :
+
+```console
+python3 dashboard --log-dir <log_dir>/lung-segmentation
+```
+
+The dashboard will be updated every epoch :
+![Live updating dashboard](./media/live_updating_dashboard.gif)
 
 ### 3. U-net testing
 To test the trained model, import the UnetSegmenter class from unet module. The constructor takes in two parameters : the weights file and the model file of the Unet model:
