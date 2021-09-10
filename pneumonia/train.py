@@ -6,6 +6,7 @@ import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
+from tensorflow.keras import regularizers
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import CategoricalAccuracy
 
@@ -50,8 +51,20 @@ def val_step(model, batch):
     return loss, accuracy
 
 def build_vgg_model():
-    backbone = tf.keras.applications.vgg19.VGG19(include_top=False, weights=None, input_shape=(256, 256, 3))
+    backbone = tf.keras.applications.vgg19.VGG19(include_top=False, weights=None, input_shape=(256, 256, 3), pooling='avg')
+    backbone.trainable = True
 
+    ### Add regularizer to backbone model ###
+    reg = regularizers.l1(2e-3)
+
+    for layer in backbone.layers:
+        if(hasattr(layer, 'kernel_regularizer')):
+            setattr(layer, 'kernel_regularizer', reg)
+    
+        if(hasattr(layer, 'kernel_initializer')):
+            setattr(layer, 'kernel_initializer', 'he_normal')
+
+    ### Add head ###
     inputs = Input(shape=(256, 256, 3))
     outputs = backbone(inputs)
     outputs = Flatten()(outputs)
