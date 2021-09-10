@@ -39,11 +39,11 @@ To initiate training of U-Net for segmentation, go into unet directory and run t
 ```
 
 Where :
- * "data_dir" is the data directory containing two sub-directories "images" and "masks". 
- * "save_path" is the checkpoint directory in which two files will be produced :
-   * model.weights.hdf5 : model weights file.
-   * model.h5 : model structure
- * "log_dir" is the directory at which training info is store"
+   * "data_dir" is the data directory containing two sub-directories "images" and "masks". 
+   * "save_path" is the checkpoint directory in which two files will be produced :
+       * model.weights.hdf5 : model weights file.
+       * model.h5 : model structure
+   * "log_dir" is the directory at which training info is store"
 
 After successful run of the training script, the terminal should appear as followed :
 ![Training log unet](./media/unet_training_log.png)
