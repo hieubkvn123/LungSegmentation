@@ -58,7 +58,7 @@ python3 dashboard --log-dir <log_dir>/lung-segmentation
 The dashboard will be updated every epoch :
 ![Live updating dashboard](./media/live_updating_dashboard.gif)
 
-### 3. U-net testing
+### 4. U-net testing
 To test the trained model, import the UnetSegmenter class from unet module. The constructor takes in two parameters : the weights file and the model file of the Unet model:
 ```python
 import cv2
