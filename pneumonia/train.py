@@ -11,7 +11,7 @@ from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import CategoricalAccuracy
 
 from dataloader import DataLoader
-from custom_callbacks import GifCreator, EarlyStopping
+from custom_callbacks import GifCreator, EarlyStopping, InfoLogger
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -68,6 +68,7 @@ def build_vgg_model():
     inputs = Input(shape=(256, 256, 3))
     outputs = backbone(inputs)
     outputs = Flatten()(outputs)
+    outputs = BatchNormalization()(outputs)
     outputs = Dense(2, activation='softmax')(outputs)
 
     model = Model(inputs=inputs, outputs=outputs, name='Lung_Diagnosis_Network')
@@ -86,6 +87,8 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
 
     train_losses = []
     val_losses = []
+    train_accs = []
+    val_accs = []
     for i in range(epochs):
         print(f'Epoch #[{i+1}/{epochs}]')
         with tqdm.tqdm(total=steps_per_epoch) as pbar:
@@ -95,6 +98,7 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
                 train_acc = train_acc.numpy()
 
                 train_losses.append(train_loss)
+                train_accs.append(train_acc)
                 pbar.set_postfix({'train_loss' : f'{train_loss:.4f}', 'train_acc' : f'{train_acc:.4f}'})
                 pbar.update(1)
            
@@ -105,12 +109,15 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
                 val_acc = val_acc.numpy()
 
                 val_losses.append(val_loss)
+                val_accs.append(val_acc)
                 pbar.set_postfix({'val_loss' : f'{val_loss:.4f}', 'val_acc' : f'{val_acc:.4f}'})
                 pbar.update(1)
 
         # Compute mean losses
         mean_train_loss = np.array(train_losses).mean()
         mean_val_loss = np.array(val_losses).mean()
+        mean_train_acc = np.array(train_accs).mean()
+        mean_val_acc = np.array(val_accs).mean()
 
         # Save models
         if((i + 1) % save_steps == 0):
@@ -118,17 +125,22 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
             model.save_weights(f'{save_path}/vgg.weights.hdf5')
             
         # Callbacks
+        stop_training = False
         if(callbacks is not None):
             for callback in callbacks:
                 callback.reset_state({
                     'model' : model,
                     'mean_train_loss' : mean_train_loss,
-                    'mean_val_loss' : mean_val_loss
+                    'mean_val_loss' : mean_val_loss,
+                    'mean_train_acc' : mean_train_acc,
+                    'mean_val_acc' : mean_val_acc
                 })
                 callback()
 
                 if(callback.stop_training):
-                    break
+                    stop_training = True
+
+        if(stop_training): break
 
 model = build_vgg_model() 
 data_dir = args['data'] 
@@ -145,7 +157,8 @@ steps_per_epoch, val_steps = loader.train_steps, loader.val_steps
 
 # Create callbacks
 early_stop = EarlyStopping(monitor='mean_val_loss', patience=2)
+info_logger = InfoLogger('../checkpoints', 'pneumonia-detector') 
 
 train(model, train_ds, val_ds, epochs=epochs, lr=lr, save_path=save_path, 
-        steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[early_stop])
+        steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[early_stop, info_logger])
 

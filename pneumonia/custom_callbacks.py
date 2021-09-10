@@ -2,6 +2,7 @@ import os
 import cv2
 import glob
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
@@ -65,9 +66,12 @@ class EarlyStopping:
 
     @staticmethod
     def _overfitting(losses, patience):
-        head = losses[-patience:]
+        overfitted = False
+        if(len(losses) >= patience):
+            head = losses[-patience:]
+            overfitted = sorted(head) == head
 
-        return sorted(head) == head
+        return overfitted
 
     def reset_state(self, state):
         if(self.monitor not in state):
@@ -79,3 +83,39 @@ class EarlyStopping:
         if(EarlyStopping._overfitting(self.losses, self.patience)):
             self.stop_training = True
 
+class InfoLogger:
+    def __init__(self, log_dir, log_name):
+        self.stop_training = False
+        self.log_dir = log_dir
+        self.log_name = log_name
+
+        if(not os.path.exists(self.log_dir)):
+            os.mkdir(self.log_dir)
+
+        if(not os.path.exists(f'{self.log_dir}/{self.log_name}')):
+            os.mkdir(f'{self.log_dir}/{self.log_name}')
+
+        self.save_path = os.path.join(self.log_dir, self.log_name)
+        
+        ### Reset log if exists ###
+        for _file in glob.glob(f'{self.save_path}/*.csv'):
+            os.unlink(_file)
+
+        self.mean_train_losses = []
+        self.mean_val_losses = []
+        self.mean_train_accs = []
+        self.mean_val_accs = []
+
+    def reset_state(self, state):
+        self.mean_train_losses.append(state['mean_train_loss'])
+        self.mean_val_losses.append(state['mean_val_loss'])
+        self.mean_train_accs.append(state['mean_train_acc'])
+        self.mean_val_accs.append(state['mean_val_acc'])
+
+    def __call__(self):
+        print('Logging training info ...')
+        loss_df = pd.DataFrame({'train' : self.mean_train_losses, 'val' : self.mean_val_losses})
+        acc_df = pd.DataFrame({'train' : self.mean_train_accs, 'val' : self.mean_val_accs})
+
+        loss_df.to_csv(f'{self.save_path}/losses.csv')
+        acc_df.to_csv(f'{self.save_path}/accuracies.csv')

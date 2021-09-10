@@ -8,7 +8,7 @@ from tensorflow.keras.losses import BinaryCrossentropy
 
 from dataloader import DataLoader
 from models import build_unet_model
-from custom_callbacks import GifCreator, EarlyStopping
+from custom_callbacks import GifCreator, EarlyStopping, InfoLogger
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
@@ -85,6 +85,7 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
             model.save_weights(f'{save_path}/model.weights.hdf5')
             
         # Callbacks
+        stop_training = False
         if(callbacks is not None):
             for callback in callbacks:
                 callback.reset_state({
@@ -95,7 +96,9 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
                 callback()
 
                 if(callback.stop_training):
-                    break
+                    stop_training = True
+
+        if(stop_training) : break
 
 model = build_unet_model()
 data_dir = args['data'] 
@@ -114,7 +117,8 @@ steps_per_epoch, val_steps = loader.train_steps, loader.val_steps
 test_file = np.random.choice(glob.glob('../data/LungSegments/images/*.png'))
 gif_creator = GifCreator(test_file)
 early_stop = EarlyStopping(monitor='mean_val_loss', patience=2)
+info_logger = InfoLogger('../checkpoints', 'lung-segmentation')
 
 train(model, train_ds, val_ds, epochs=epochs, lr=lr, save_path=save_path, 
-        steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[gif_creator, early_stop])
+        steps_per_epoch=steps_per_epoch, val_steps=val_steps, callbacks=[gif_creator, early_stop, info_logger])
 
