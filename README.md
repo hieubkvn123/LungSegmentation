@@ -1,10 +1,10 @@
 # LungSegmentation
 This repository attempts to perform lung segmentation on chest x-ray images using purely image preprocessing and deep learning approaches like U-Net. The segmentation of lung regions can be later used to perform abnomaly detection on chest x-ray regions
 
-# Lung segmentation with image preprocessing approach.
+# I. Lung segmentation with image preprocessing approach.
 This repository makes use of the preprocessing pipeline suggested by the "Lung boundary detection for chest X-ray images classification based on GLCM and probabilistic neural networks" paper ([Link](https://www.sciencedirect.com/science/article/pii/S1877050919315145) ).
 
-## Preprocessing pipeline
+### 1. Preprocessing pipeline
 ![Preprocessing pipeline](./media/lungseg_pipeline.png)
 
  - The testing script can be ran using the test.py file:
@@ -12,21 +12,21 @@ This repository makes use of the preprocessing pipeline suggested by the "Lung b
 	python3 test.py --input <path_to_chest_xray_img_file>
 ```
 
-## Experimental results
-#### 1. Segmentation result using BCET preprocessing
+### 2. Experimental results
+#### 2.1. Segmentation result using BCET preprocessing
 ![Lung segmentation BCET](./media/lungseg_opencv_bcet.png)
 
-#### 2. Segmentation result using CLAHE on gray scale image
+#### 2.2. Segmentation result using CLAHE on gray scale image
 ![Lung segmentation CLAHE](./media/lungseg_opencv_clahe.png)
 
-#### 3. Segmentation result using CLAHE on l-channel of LAB image
+#### 2.3. Segmentation result using CLAHE on l-channel of LAB image
 ![Lung segmentation CLAHE-LAB](./media/lungseg_opencv_clahe_lab.png)
 
-# Lung segmentation with deep learning approache.
-## Dataset
+# II. Lung segmentation with deep learning approache.
+### 1. Dataset
 The dataset to train U-net in this repository is taken from this [github](https://github.com/IlliaOvcharenko/lung-segmentation) repository.
 
-## U-net training
+### 2. U-net training
 To initiate training of U-Net for segmentation, go into unet directory and run train.py in the following way :
 ```console
        python3 train.py --data <data_dir>
@@ -48,7 +48,7 @@ Where :
 After successful run of the training script, the terminal should appear as followed :
 ![Training log unet](./media/unet_training_log.png)
 
-## U-net testing
+### 3. U-net testing
 To test the trained model, import the UnetSegmenter class from unet module. The constructor takes in two parameters : the weights file and the model file of the Unet model:
 ```python
 import cv2
