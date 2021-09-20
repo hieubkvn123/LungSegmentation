@@ -1,0 +1,124 @@
+[I 20:33:32.384 NotebookApp] Serving notebooks from local directory: /home/minhhieu/Desktop/Hieu/LungSegmentation/ema-unet/notebooks
+[I 20:33:32.384 NotebookApp] Jupyter Notebook 6.1.5 is running at:
+[I 20:33:32.384 NotebookApp] http://localhost:8888/?token=ac32c185482fab51122c43502936c9e4fc665a7fb07eb6d0
+[I 20:33:32.384 NotebookApp]  or http://127.0.0.1:8888/?token=ac32c185482fab51122c43502936c9e4fc665a7fb07eb6d0
+[I 20:33:32.384 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 20:33:32.386 NotebookApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/minhhieu/.local/share/jupyter/runtime/nbserver-247606-open.html
+    Or copy and paste one of these URLs:
+        http://localhost:8888/?token=ac32c185482fab51122c43502936c9e4fc665a7fb07eb6d0
+     or http://127.0.0.1:8888/?token=ac32c185482fab51122c43502936c9e4fc665a7fb07eb6d0
+[I 20:34:43.950 NotebookApp] 302 GET / (127.0.0.1) 1.13ms
+[I 20:34:55.394 NotebookApp] Creating new notebook in 
+[W 20:34:55.693 NotebookApp] Config option `template_path` not recognized by `ExporterCollapsibleHeadings`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.697 NotebookApp] Config option `template_path` not recognized by `ExporterCollapsibleHeadings`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.711 NotebookApp] Config option `template_path` not recognized by `TocExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.713 NotebookApp] Config option `template_path` not recognized by `TocExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.719 NotebookApp] Config option `template_path` not recognized by `LenvsHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.724 NotebookApp] Config option `template_path` not recognized by `LenvsHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.730 NotebookApp] Config option `template_path` not recognized by `LenvsTocHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.735 NotebookApp] Config option `template_path` not recognized by `LenvsTocHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.751 NotebookApp] Config option `template_path` not recognized by `LenvsLatexExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.754 NotebookApp] Config option `template_path` not recognized by `LenvsLatexExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.822 NotebookApp] Config option `template_path` not recognized by `LenvsSlidesExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.826 NotebookApp] Config option `template_path` not recognized by `LenvsSlidesExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.866 NotebookApp] Config option `template_path` not recognized by `ExporterCollapsibleHeadings`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.870 NotebookApp] Config option `template_path` not recognized by `ExporterCollapsibleHeadings`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.884 NotebookApp] Config option `template_path` not recognized by `TocExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.887 NotebookApp] Config option `template_path` not recognized by `TocExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.891 NotebookApp] Config option `template_path` not recognized by `LenvsHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.896 NotebookApp] Config option `template_path` not recognized by `LenvsHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.902 NotebookApp] Config option `template_path` not recognized by `LenvsTocHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.907 NotebookApp] Config option `template_path` not recognized by `LenvsTocHTMLExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.922 NotebookApp] Config option `template_path` not recognized by `LenvsLatexExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.925 NotebookApp] Config option `template_path` not recognized by `LenvsLatexExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.994 NotebookApp] Config option `template_path` not recognized by `LenvsSlidesExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[W 20:34:55.997 NotebookApp] Config option `template_path` not recognized by `LenvsSlidesExporter`.  Did you mean one of: `extra_template_paths, template_name, template_paths`?
+[I 20:34:58.329 NotebookApp] Kernel started: 5b0c65ec-6b08-46cc-88e5-30702b5e0c9d, name: python3
+2021-09-20 20:35:51.363493: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudart.so.10.1
+[I 20:36:58.392 NotebookApp] Saving file at /Untitled.ipynb
+[I 20:37:09.296 NotebookApp] Saving file at /Untitled.ipynb
+[I 20:38:58.384 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:40:58.566 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:42:58.447 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:44:44.444 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:46:58.431 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:48:58.450 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:50:58.425 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:51:00.230 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:52:58.464 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:54:46.969 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:56:58.475 NotebookApp] Saving file at /DataLoader.ipynb
+[I 20:58:58.581 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:00:58.461 NotebookApp] Saving file at /DataLoader.ipynb
+2021-09-20 21:02:48.601848: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcuda.so.1
+2021-09-20 21:02:48.682297: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:48.683828: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1716] Found device 0 with properties: 
+pciBusID: 0000:01:00.0 name: GeForce RTX 2080 Ti computeCapability: 7.5
+coreClock: 1.74GHz coreCount: 68 deviceMemorySize: 10.76GiB deviceMemoryBandwidth: 573.69GiB/s
+2021-09-20 21:02:48.683948: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudart.so.10.1
+2021-09-20 21:02:48.688124: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcublas.so.10
+2021-09-20 21:02:48.691833: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcufft.so.10
+2021-09-20 21:02:48.692687: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcurand.so.10
+2021-09-20 21:02:48.697209: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcusolver.so.10
+2021-09-20 21:02:48.700204: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcusparse.so.10
+2021-09-20 21:02:48.710568: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudnn.so.7
+2021-09-20 21:02:48.710866: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:48.712498: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:48.713877: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1858] Adding visible gpu devices: 0
+2021-09-20 21:02:48.714921: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-09-20 21:02:48.754702: I tensorflow/core/platform/profile_utils/cpu_utils.cc:104] CPU Frequency: 3799900000 Hz
+2021-09-20 21:02:48.757529: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5ae0520 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+2021-09-20 21:02:48.757589: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+2021-09-20 21:02:48.830738: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:48.831105: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5f568d0 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+2021-09-20 21:02:48.831117: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): GeForce RTX 2080 Ti, Compute Capability 7.5
+2021-09-20 21:02:48.831254: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:48.831534: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1716] Found device 0 with properties: 
+pciBusID: 0000:01:00.0 name: GeForce RTX 2080 Ti computeCapability: 7.5
+coreClock: 1.74GHz coreCount: 68 deviceMemorySize: 10.76GiB deviceMemoryBandwidth: 573.69GiB/s
+2021-09-20 21:02:48.831565: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudart.so.10.1
+2021-09-20 21:02:48.831581: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcublas.so.10
+2021-09-20 21:02:48.831593: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcufft.so.10
+2021-09-20 21:02:48.831604: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcurand.so.10
+2021-09-20 21:02:48.831614: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcusolver.so.10
+2021-09-20 21:02:48.831624: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcusparse.so.10
+2021-09-20 21:02:48.831636: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudnn.so.7
+2021-09-20 21:02:48.831674: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:48.831962: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:48.832225: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1858] Adding visible gpu devices: 0
+2021-09-20 21:02:48.832247: I tensorflow/stream_executor/platform/default/dso_loader.cc:48] Successfully opened dynamic library libcudart.so.10.1
+2021-09-20 21:02:49.103342: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1257] Device interconnect StreamExecutor with strength 1 edge matrix:
+2021-09-20 21:02:49.103374: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1263]      0 
+2021-09-20 21:02:49.103379: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1276] 0:   N 
+2021-09-20 21:02:49.103526: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:49.103831: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:982] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2021-09-20 21:02:49.104089: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1402] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10038 MB memory) -> physical GPU (device: 0, name: GeForce RTX 2080 Ti, pci bus id: 0000:01:00.0, compute capability: 7.5)
+[I 21:02:59.006 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:04:58.879 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:06:58.954 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:08:59.900 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:10:59.800 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:12:59.499 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:14:59.488 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:17:00.529 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:18:59.333 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:20:59.344 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:22:59.359 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:24:59.888 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:28:59.571 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:30:59.643 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:42:59.458 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:46:59.421 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:47:10.662 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:48:13.863 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:48:59.360 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:51:00.003 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:53:00.708 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:54:59.382 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:56:59.784 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:57:51.415 NotebookApp] Saving file at /DataLoader.ipynb
+[I 21:57:56.298 NotebookApp] Saving file at /DataLoader.ipynb
