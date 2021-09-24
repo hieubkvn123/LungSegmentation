@@ -3,6 +3,27 @@ from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
 from tensorflow.keras.regularizers import l1, l2
 
+class EMA_Unet:
+    def __init__(self, momentum=0.999):
+        self.student = build_unet_model()
+        self.teacher = build_unet_model()
+
+        self.momentum = momentum
+
+    def update_ema_params(self, step):
+        alpha = self.momentum #min(self.momentum, 1 - (1/(1 + step)))
+
+        for i, s_layer in enumerate(self.student.layers):
+            s_params = s_layer.weights
+            
+            if(len(s_params) > 0):
+                updated_params = []
+                for j in range(len(s_params)):
+                    t_params = self.teacher.layers[i].weights
+                    updated_params.append(alpha * t_params[j] + (1 - alpha) * s_params[j])
+
+                self.teacher.layers[i].set_weights(updated_params)
+
 def build_unet_model():
     inputs = Input(shape=(256, 256, 3))
     init = 'he_normal' # l1(2e-4)

@@ -13,6 +13,7 @@ from argparse import ArgumentParser
 
 parser = ArgumentParser()
 parser.add_argument('--data', type=str, required=True, help='Path to the data directory with subdirectories "images" and "masks"')
+parser.add_argument('--u-data', type=str, required=False, default=None, help='Path to the unlabelled dataset')
 parser.add_argument('--epochs', type=int, required=False, default=100, help='Number of training iterations')
 parser.add_argument('--batch-size', type=int, required=False, default=16, help='Number of instances per batch')
 parser.add_argument('--val-ratio', type=float, required=False, default=0.2, help='Ratio of validation/total dataset')
@@ -45,7 +46,7 @@ def val_step(model, batch):
 
     return loss
 
-def train(model, train_dataset, val_dataset, save_path='checkpoints', 
+def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoints', 
         epochs=100, lr=0.0001, steps_per_epoch=50, val_steps=10, save_steps=5, callbacks=None):
     if(not os.path.exists(save_path)):
         os.mkdir(save_path)
@@ -58,6 +59,8 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
     val_losses = []
     for i in range(epochs):
         print(f'Epoch #[{i+1}/{epochs}]')
+
+        ### Run through train supervised data directory ###
         with tqdm.tqdm(total=steps_per_epoch) as pbar:
             for batch in train_dataset:
                 train_loss = train_step(model, optimizer, batch)
@@ -66,7 +69,12 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
                 train_losses.append(train_loss)
                 pbar.set_postfix({'train_loss' : f'{train_loss:.4f}'})
                 pbar.update(1)
+
+        ### Run through unsupervised data directory ###
+        if(u_dataset is not None):
+            pass
            
+        ### Run through val supervised data directory ###
         with tqdm.tqdm(total=val_steps, colour='green') as pbar:
             for batch in val_dataset:
                 val_loss = val_step(model, batch)
@@ -103,6 +111,7 @@ def train(model, train_dataset, val_dataset, save_path='checkpoints',
 
 model = build_unet_model()
 data_dir = args['data'] 
+u_data_dir = args['u_data']
 batch_size = args['batch_size']
 test_ratio = args['val_ratio']
 epochs = args['epochs'] 
