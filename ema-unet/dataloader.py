@@ -129,6 +129,7 @@ class DataLoader:
     
     def get_unlabelled_dataset(self):
         # Unlabelled dataset will return weakly augmented and strongly augmented images
+        self.unsupervised_steps = len(self.unlabelled_img_files) // self.u_batch_size
         u_dataset = tf.data.Dataset.from_tensor_slices(self.unlabelled_img_files)
         u_dataset = u_dataset.map(DataLoader.parse_unlabelled_data_fn)
         u_dataset = u_dataset.repeat()
