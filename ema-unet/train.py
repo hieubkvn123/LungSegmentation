@@ -14,7 +14,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument('--data', type=str, required=True, help='Path to the data directory with subdirectories "images" and "masks"')
 parser.add_argument('--u-data', type=str, required=False, default=None, help='Path to the unlabelled dataset')
-parser.add_argument('--momentum', type=str, required=False, default=0.999, help='EMA momentum')
+parser.add_argument('--momentum', type=str, required=False, default=0.1, help='EMA momentum')
 parser.add_argument('--epochs', type=int, required=False, default=100, help='Number of training iterations')
 parser.add_argument('--batch-size', type=int, required=False, default=16, help='Number of instances per batch')
 parser.add_argument('--u-batch-size', type=int, required=False, default=8, help='Number of instances per batch in unsupervised training')
@@ -39,7 +39,13 @@ def train_step(model, opt, batch):
     return loss
 
 @tf.function
-def train_step_unsupervised(ema_model, opt, batch, alpha=0.005):
+def train_step_unsupervised(ema_model, opt, batch, step, alpha=0.005):
+    # Compute consistency weight
+    consistency = 100.0
+    consistency_rampup = 5
+
+    alpha = consistency * EMA_Unet.sigmoid_rampup(step, consistency_rampup)
+
     with tf.GradientTape() as tape:
         mse = MeanSquaredError()
         strong_aug, weak_aug = batch
@@ -95,7 +101,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
         if(u_dataset is not None):
             with tqdm.tqdm(total=unsupervised_steps, colour='red') as pbar:
                 for batch in u_dataset:
-                    unsupervised_loss = train_step_unsupervised(model, optimizer, batch)
+                    unsupervised_loss = train_step_unsupervised(model, optimizer, batch, i+1)
                     unsupervised_loss = unsupervised_loss.numpy()
 
                     pbar.set_postfix({'unsupervised_loss' : f'{unsupervised_loss:.4f}'})

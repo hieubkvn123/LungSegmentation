@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
@@ -11,7 +12,9 @@ class EMA_Unet:
         self.momentum = momentum
 
     def update_ema_params(self, step):
-        alpha = self.momentum #min(self.momentum, 1 - (1/(1 + step)))
+        alpha = min(self.momentum, 1 - (1/(1 + step)))
+        if(step == 1):
+            self.teacher.set_weights(self.student.get_weights())
 
         for i, s_layer in enumerate(self.student.layers):
             s_params = s_layer.weights
@@ -23,6 +26,17 @@ class EMA_Unet:
                     updated_params.append(alpha * t_params[j] + (1 - alpha) * s_params[j])
 
                 self.teacher.layers[i].set_weights(updated_params)
+
+    @staticmethod
+    def sigmoid_rampup(current, rampup_length):
+        """Exponential rampup from https://arxiv.org/abs/1610.02242"""
+        if rampup_length == 0:
+            return 1.0
+        else:
+            current = np.clip(current, 0.0, rampup_length)
+            phase = 1.0 - current / rampup_length
+            return float(np.exp(-5.0 * phase * phase))
+
 
     @staticmethod
     def build_unet_model():
