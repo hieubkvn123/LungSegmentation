@@ -4,7 +4,7 @@ import tqdm
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.losses import BinaryCrossentropy
+from tensorflow.keras.losses import BinaryCrossentropy, MeanSquaredError
 
 from dataloader import DataLoader
 from models import EMA_Unet # build_unet_model
@@ -16,8 +16,8 @@ parser.add_argument('--data', type=str, required=True, help='Path to the data di
 parser.add_argument('--u-data', type=str, required=False, default=None, help='Path to the unlabelled dataset')
 parser.add_argument('--momentum', type=str, required=False, default=0.999, help='EMA momentum')
 parser.add_argument('--epochs', type=int, required=False, default=100, help='Number of training iterations')
-parser.add_argument('--batch-size', type=int, required=False, default=8, help='Number of instances per batch')
-parser.add_argument('--u-batch-size', type=int, required=False, default=16, help='Number of instances per batch in unsupervised training')
+parser.add_argument('--batch-size', type=int, required=False, default=16, help='Number of instances per batch')
+parser.add_argument('--u-batch-size', type=int, required=False, default=8, help='Number of instances per batch in unsupervised training')
 parser.add_argument('--val-ratio', type=float, required=False, default=0.2, help='Ratio of validation/total dataset')
 parser.add_argument('--lr', type=float, required=False, default=0.00005, help='Learning rate')
 parser.add_argument('--save-path', type=str, required=False, default='../checkpoints', help='Path at which model and weights are saved')
@@ -39,14 +39,14 @@ def train_step(model, opt, batch):
     return loss
 
 @tf.function
-def train_step_unsupervised(ema_model, opt, batch, alpha=0.05):
+def train_step_unsupervised(ema_model, opt, batch, alpha=0.005):
     with tf.GradientTape() as tape:
-        bce = BinaryCrossentropy(from_logits=False)
+        mse = MeanSquaredError()
         strong_aug, weak_aug = batch
 
         pseudo_label = ema_model.teacher(weak_aug, training=False)
         predicted_masks = ema_model.student(strong_aug, training=True)
-        loss = alpha * bce(pseudo_label, predicted_masks)
+        loss = alpha * mse(pseudo_label, predicted_masks)
 
         gradients = tape.gradient(loss, ema_model.student.trainable_variables)
     opt.apply_gradients(zip(gradients, ema_model.student.trainable_variables))

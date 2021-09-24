@@ -134,5 +134,6 @@ class DataLoader:
         u_dataset = u_dataset.map(DataLoader.parse_unlabelled_data_fn)
         u_dataset = u_dataset.repeat()
         u_dataset = u_dataset.batch(self.u_batch_size)
+        u_dataset = u_dataset.take(self.unsupervised_steps)
         
         return u_dataset
