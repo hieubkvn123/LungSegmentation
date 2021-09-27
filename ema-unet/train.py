@@ -16,7 +16,7 @@ parser.add_argument('--data', type=str, required=True, help='Path to the data di
 parser.add_argument('--u-data', type=str, required=False, default=None, help='Path to the unlabelled dataset')
 parser.add_argument('--momentum', type=str, required=False, default=0.999, help='EMA momentum')
 parser.add_argument('--epochs', type=int, required=False, default=100, help='Number of training iterations')
-parser.add_argument('--batch-size', type=int, required=False, default=16, help='Number of instances per batch')
+parser.add_argument('--batch-size', type=int, required=False, default=8, help='Number of instances per batch')
 parser.add_argument('--u-batch-size', type=int, required=False, default=8, help='Number of instances per batch in unsupervised training')
 parser.add_argument('--val-ratio', type=float, required=False, default=0.2, help='Ratio of validation/total dataset')
 parser.add_argument('--lr', type=float, required=False, default=0.00005, help='Learning rate')
@@ -25,16 +25,34 @@ parser.add_argument('--log-dir', type=str, required=False, default='../checkpoin
 args = vars(parser.parse_args())
 
 @tf.function
-def train_step(model, opt, batch):
+def train_step(ema_model, opt, batch, step=1):
+    # Compute consistency weight
+    consistency = 100.0
+    consistency_rampup = 5
+
+    alpha = consistency * EMA_Unet.sigmoid_rampup(step, consistency_rampup)
+    
+    bce = BinaryCrossentropy(from_logits=False)
+    mse = MeanSquaredError()
+    
     with tf.GradientTape() as tape:
-        bce = BinaryCrossentropy(from_logits=False)
-        images, masks = batch
+        weak_aug, strong_aug, masks = batch
 
-        predicted_masks = model(images, training=True)
-        loss = bce(masks, predicted_masks)
+        # 1. Calculate the classification loss
+        predicted_masks = ema_model.student(weak_aug, training=True)
+        cls_loss = bce(masks, predicted_masks)
 
-        gradients = tape.gradient(loss, model.trainable_variables)
-    opt.apply_gradients(zip(gradients, model.trainable_variables))
+        # 2. Calculate the consistency loss
+        pseudo_label = ema_model.teacher(weak_aug, training=False)
+        predicted_masks = ema_model.student(strong_aug, training=True)
+        consistency_loss = alpha * mse(pseudo_label, predicted_masks)
+
+        # 3. Overall loss
+        loss = cls_loss + alpha * consistency_loss
+
+        gradients = tape.gradient(loss, ema_model.student.trainable_variables)
+
+    opt.apply_gradients(zip(gradients, ema_model.student.trainable_variables))
 
     return loss
 
@@ -62,7 +80,7 @@ def train_step_unsupervised(ema_model, opt, batch, step, alpha=0.005):
 @tf.function
 def val_step(model, batch):
     bce = BinaryCrossentropy(from_logits=False)
-    images, masks = batch
+    images, _, masks = batch
     
     predictions = model(images, training=False)
     loss = bce(masks, predictions)
@@ -81,34 +99,37 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
 
     train_losses = []
     val_losses = []
+    global_step = 0
     for i in range(epochs):
         print(f'Epoch #[{i+1}/{epochs}]')
 
         ### Run through train supervised data directory ###
         with tqdm.tqdm(total=steps_per_epoch) as pbar:
             for batch in train_dataset:
-                train_loss = train_step(model.student, optimizer, batch)
+                train_loss = train_step(model, optimizer, batch, step=i+1)
+                global_step += 1
                 train_loss = train_loss.numpy()
 
                 train_losses.append(train_loss)
                 pbar.set_postfix({'train_loss' : f'{train_loss:.4f}'})
                 pbar.update(1)
 
-        # EMA update after supervised learning
-        model.update_ema_params(i+1, ema=ema)
+                # EMA update after supervised learning
+                model.update_ema_params(global_step, ema=ema)
 
         ### Run through unsupervised data directory ###
         if(u_dataset is not None):
             with tqdm.tqdm(total=unsupervised_steps, colour='red') as pbar:
                 for batch in u_dataset:
                     unsupervised_loss = train_step_unsupervised(model, optimizer, batch, i+1)
+                    global_step += 1
                     unsupervised_loss = unsupervised_loss.numpy()
 
                     pbar.set_postfix({'unsupervised_loss' : f'{unsupervised_loss:.4f}'})
                     pbar.update(1)
 
-        # EMA update after unsupervised learning
-        model.update_ema_params(i+1, ema=ema)
+                    # EMA update after unsupervised learning
+                    model.update_ema_params(global_step, ema=ema)
            
         ### Run through val supervised data directory ###
         with tqdm.tqdm(total=val_steps, colour='green') as pbar:
@@ -146,7 +167,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
 
         if(stop_training) : break
 
-ema = True # Whether to use Mean Teacher or not
+ema = False # Whether to use Mean Teacher or not
 data_dir = args['data'] 
 momentum = args['momentum']
 u_data_dir = args['u_data']
@@ -168,7 +189,7 @@ unsupervised_steps = loader.unsupervised_steps
 # Create callbacks
 test_file = np.random.choice(glob.glob('../data/LungSegments/images/*.png'))
 gif_creator = GifCreator(test_file)
-early_stop = EarlyStopping(monitor='mean_val_loss', patience=2)
+early_stop = EarlyStopping(monitor='mean_val_loss', patience=5)
 info_logger = InfoLogger(args['log_dir'], 'lung-segmentation')
 
 train(model, train_ds, val_ds, u_dataset=u_ds, ema=ema, epochs=epochs, lr=lr, save_path=save_path, 

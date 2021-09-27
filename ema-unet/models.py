@@ -10,13 +10,14 @@ class EMA_Unet:
         self.teacher = EMA_Unet.build_unet_model()
 
         self.momentum = momentum
-
+        # Initially, params_t = params_s
+        self.teacher.set_weights(self.student.get_weights())
+    
     def update_ema_params(self, step, ema=False):
         alpha = min(self.momentum, 1 - (1/(1 + step)))
         if(step == 1 or not ema):
             self.teacher.set_weights(self.student.get_weights())
-
-        if(ema):
+        else:
             for i, s_layer in enumerate(self.student.layers):
                 s_params = s_layer.weights
                 
@@ -42,7 +43,7 @@ class EMA_Unet:
     @staticmethod
     def build_unet_model():
         inputs = Input(shape=(256, 256, 3))
-        init = 'he_normal' # l1(2e-4)
+        init = 'he_uniform' # l1(2e-4)
         reg  = l1(2e-04)
 
         ## Encoding path ##

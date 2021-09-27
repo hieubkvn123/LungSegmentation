@@ -76,7 +76,9 @@ class DataLoader:
     def parse_fn(img_file, mask_file):
         img = tf.io.read_file(img_file)
         img = tf.image.decode_png(img, 3)
-        img = DataLoader.map_fn(img)
+        # img = DataLoader.map_fn(img)
+
+        weak_aug, strong_aug = DataLoader.augment_image(img)
 
         mask = tf.io.read_file(mask_file)
         mask = tf.image.decode_png(mask, 1)
@@ -84,14 +86,10 @@ class DataLoader:
         mask = tf.image.resize(mask, [256, 256])
         mask = mask / 255.0
 
-        return img, mask
+        return weak_aug, strong_aug, mask
     
     @staticmethod
-    def parse_unlabelled_data_fn(img_file):
-        # Read image and perform weak and strong augmentation
-        img = tf.io.read_file(img_file)
-        img = tf.image.decode_png(img, 3)
-        
+    def augment_image(img):
         # Weakly augmented - for now no weakly aug, just leave the original image
         weak_aug = img
         
@@ -105,6 +103,16 @@ class DataLoader:
         # Normalize and resize
         weak_aug = DataLoader.map_fn(weak_aug)
         strong_aug = DataLoader.map_fn(strong_aug)
+
+        return weak_aug, strong_aug
+
+    @staticmethod
+    def parse_unlabelled_data_fn(img_file):
+        # Read image and perform weak and strong augmentation
+        img = tf.io.read_file(img_file)
+        img = tf.image.decode_png(img, 3)
+        
+        weak_aug, strong_aug = DataLoader.augment_image(img)
 
         return weak_aug, strong_aug
 
