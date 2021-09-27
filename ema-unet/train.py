@@ -69,7 +69,7 @@ def val_step(model, batch):
 
     return loss
 
-def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoints', 
+def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoints', ema=False, 
         epochs=100, lr=0.0001, steps_per_epoch=50, unsupervised_steps=50, val_steps=10, save_steps=5, callbacks=None):
     if(not os.path.exists(save_path)):
         os.mkdir(save_path)
@@ -95,7 +95,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
                 pbar.update(1)
 
         # EMA update after supervised learning
-        model.update_ema_params(i+1)
+        model.update_ema_params(i+1, ema=ema)
 
         ### Run through unsupervised data directory ###
         if(u_dataset is not None):
@@ -108,7 +108,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
                     pbar.update(1)
 
         # EMA update after unsupervised learning
-        model.update_ema_params(i+1)
+        model.update_ema_params(i+1, ema=ema)
            
         ### Run through val supervised data directory ###
         with tqdm.tqdm(total=val_steps, colour='green') as pbar:
@@ -146,6 +146,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
 
         if(stop_training) : break
 
+ema = False # Whether to use Mean Teacher or not
 data_dir = args['data'] 
 momentum = args['momentum']
 u_data_dir = args['u_data']
@@ -170,7 +171,7 @@ gif_creator = GifCreator(test_file)
 early_stop = EarlyStopping(monitor='mean_val_loss', patience=2)
 info_logger = InfoLogger(args['log_dir'], 'lung-segmentation')
 
-train(model, train_ds, val_ds, u_dataset=u_ds,epochs=epochs, lr=lr, save_path=save_path, 
+train(model, train_ds, val_ds, u_dataset=u_ds, ema=ema, epochs=epochs, lr=lr, save_path=save_path, 
         steps_per_epoch=steps_per_epoch, unsupervised_steps=unsupervised_steps,val_steps=val_steps, 
         callbacks=[gif_creator, early_stop, info_logger])
 

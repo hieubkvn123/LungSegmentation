@@ -11,21 +11,22 @@ class EMA_Unet:
 
         self.momentum = momentum
 
-    def update_ema_params(self, step):
+    def update_ema_params(self, step, ema=False):
         alpha = min(self.momentum, 1 - (1/(1 + step)))
-        if(step == 1):
+        if(step == 1 or not ema):
             self.teacher.set_weights(self.student.get_weights())
 
-        for i, s_layer in enumerate(self.student.layers):
-            s_params = s_layer.weights
-            
-            if(len(s_params) > 0):
-                updated_params = []
-                for j in range(len(s_params)):
-                    t_params = self.teacher.layers[i].weights
-                    updated_params.append(alpha * t_params[j] + (1 - alpha) * s_params[j])
+        if(ema):
+            for i, s_layer in enumerate(self.student.layers):
+                s_params = s_layer.weights
+                
+                if(len(s_params) > 0):
+                    updated_params = []
+                    for j in range(len(s_params)):
+                        t_params = self.teacher.layers[i].weights
+                        updated_params.append(alpha * t_params[j] + (1 - alpha) * s_params[j])
 
-                self.teacher.layers[i].set_weights(updated_params)
+                    self.teacher.layers[i].set_weights(updated_params)
 
     @staticmethod
     def sigmoid_rampup(current, rampup_length):

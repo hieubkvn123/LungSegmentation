@@ -70,6 +70,3 @@ img = cv2.imread('images/test1.png')
 img = cv2.resize(img, (256, 256))
 segmenter.visualize_prediction(img)
 ```
-
-Sample testing result:
-![Unet testing result](./media/lungseg_unet.png)
