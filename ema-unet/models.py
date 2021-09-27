@@ -48,26 +48,31 @@ class EMA_Unet:
         ## Encoding path ##
         conv_1_1 = Conv2D(64, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(inputs)
         conv_1_2 = Conv2D(64, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_1_1)
+        conv_1_2 = Dropout(0.5)(conv_1_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_1_2)
 
         conv_2_1 = Conv2D(128, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_2_2 = Conv2D(128, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_2_1)
+        conv_2_2 = Dropout(0.5)(conv_2_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_2_2)
 
         conv_3_1 = Conv2D(256, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_3_2 = Conv2D(256, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_3_1)
+        conv_3_2 = Dropout(0.5)(conv_3_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_3_2)
 
         conv_4_1 = Conv2D(512, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_4_2 = Conv2D(512, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_4_1)
+        conv_4_2 = Dropout(0.5)(conv_4_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_4_2)
 
         conv_5_1 = Conv2D(1024, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_5_2 = Conv2D(1024, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_5_1)
+        conv_5_2 = Dropout(0.5)(conv_5_2)
 
         ## Decoding path ##
         # up1 = Conv2DTranspose(512, kernel_size=2, strides=(2,2), padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_5_2)
@@ -76,6 +81,7 @@ class EMA_Unet:
 
         upconv_1_1 = Conv2D(512, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up1)
         upconv_1_2 = Conv2D(512, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_1_1)
+        upconv_1_2 = Dropout(0.5)(upconv_1_2)
 
         # up2 = Conv2DTranspose(256, kernel_size=2, strides=(2,2), padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_1_2)
         up2 = UpSampling2D(size=(2,2))(upconv_1_2)
@@ -83,6 +89,7 @@ class EMA_Unet:
 
         upconv_2_1 = Conv2D(256, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up2)
         upconv_2_2 = Conv2D(256, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_2_1)
+        upconv_2_2 = Dropout(0.5)(upconv_2_2)
 
         # up3 = Conv2DTranspose(128, kernel_size=2, strides=(2,2), padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_2_2)
         up3 = UpSampling2D(size=(2,2))(upconv_2_2)
@@ -90,6 +97,7 @@ class EMA_Unet:
 
         upconv_3_1 = Conv2D(128, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up3)
         upconv_3_2 = Conv2D(128, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_3_1)
+        upconv_3_2 = Dropout(0.5)(upconv_3_2)
 
         # up4 = Conv2DTranspose(64, kernel_size=2, strides=(2,2), padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_3_2)
         up4 = UpSampling2D(size=(2,2))(upconv_3_2)
@@ -97,6 +105,7 @@ class EMA_Unet:
 
         upconv_4_1 = Conv2D(64, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up4)
         upconv_4_2 = Conv2D(64, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_4_1)
+        upconv_4_2 = Dropout(0.5)(upconv_4_2)
         output = Conv2D(1, kernel_size=3, activation='sigmoid', padding='same', kernel_initializer=init, kernel_regularizer=reg)(upconv_4_2)
 
         model = Model(inputs=inputs, outputs=output, name='UNet-Lung-Segmentation')

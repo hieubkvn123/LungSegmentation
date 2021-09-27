@@ -14,7 +14,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument('--data', type=str, required=True, help='Path to the data directory with subdirectories "images" and "masks"')
 parser.add_argument('--u-data', type=str, required=False, default=None, help='Path to the unlabelled dataset')
-parser.add_argument('--momentum', type=str, required=False, default=0.1, help='EMA momentum')
+parser.add_argument('--momentum', type=str, required=False, default=0.999, help='EMA momentum')
 parser.add_argument('--epochs', type=int, required=False, default=100, help='Number of training iterations')
 parser.add_argument('--batch-size', type=int, required=False, default=16, help='Number of instances per batch')
 parser.add_argument('--u-batch-size', type=int, required=False, default=8, help='Number of instances per batch in unsupervised training')
@@ -146,7 +146,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
 
         if(stop_training) : break
 
-ema = False # Whether to use Mean Teacher or not
+ema = True # Whether to use Mean Teacher or not
 data_dir = args['data'] 
 momentum = args['momentum']
 u_data_dir = args['u_data']
