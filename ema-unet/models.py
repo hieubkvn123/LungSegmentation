@@ -5,9 +5,9 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.regularizers import l1, l2
 
 class EMA_Unet:
-    def __init__(self, momentum=0.999):
-        self.student = EMA_Unet.build_unet_model()
-        self.teacher = EMA_Unet.build_unet_model()
+    def __init__(self, momentum=0.999, batchnorm=False):
+        self.student = EMA_Unet.build_unet_model(batchnorm=batchnorm)
+        self.teacher = EMA_Unet.build_unet_model(batchnorm=batchnorm)
 
         self.momentum = momentum
         # Initially, params_t = params_s
@@ -41,7 +41,7 @@ class EMA_Unet:
 
 
     @staticmethod
-    def build_unet_model():
+    def build_unet_model(batchnorm=False):
         inputs = Input(shape=(256, 256, 3))
         init = 'he_uniform' # l1(2e-4)
         reg  = l1(2e-04)
@@ -49,30 +49,35 @@ class EMA_Unet:
         ## Encoding path ##
         conv_1_1 = Conv2D(64, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(inputs)
         conv_1_2 = Conv2D(64, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_1_1)
+        if(batchnorm): conv_1_2 = BatchNormalization()(conv_1_2)
         conv_1_2 = Dropout(0.5)(conv_1_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_1_2)
 
         conv_2_1 = Conv2D(128, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_2_2 = Conv2D(128, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_2_1)
+        if(batchnorm): conv_2_2 = BatchNormalization()(conv_2_2)
         conv_2_2 = Dropout(0.5)(conv_2_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_2_2)
 
         conv_3_1 = Conv2D(256, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_3_2 = Conv2D(256, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_3_1)
+        if(batchnorm): conv_3_2 = BatchNormalization()(conv_3_2)
         conv_3_2 = Dropout(0.5)(conv_3_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_3_2)
 
         conv_4_1 = Conv2D(512, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_4_2 = Conv2D(512, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_4_1)
+        if(batchnorm): conv_4_2 = BatchNormalization()(conv_4_2)
         conv_4_2 = Dropout(0.5)(conv_4_2)
 
         pool = MaxPooling2D(pool_size=(2,2))(conv_4_2)
 
         conv_5_1 = Conv2D(1024, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(pool)
         conv_5_2 = Conv2D(1024, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(conv_5_1)
+        if(batchnorm): conv_5_2 = BatchNormalization()(conv_5_2)
         conv_5_2 = Dropout(0.5)(conv_5_2)
 
         ## Decoding path ##
@@ -82,6 +87,7 @@ class EMA_Unet:
 
         upconv_1_1 = Conv2D(512, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up1)
         upconv_1_2 = Conv2D(512, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_1_1)
+        if(batchnorm): upconv_1_2 = BatchNormalization()(upconv_1_2)
         upconv_1_2 = Dropout(0.5)(upconv_1_2)
 
         # up2 = Conv2DTranspose(256, kernel_size=2, strides=(2,2), padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_1_2)
@@ -90,6 +96,7 @@ class EMA_Unet:
 
         upconv_2_1 = Conv2D(256, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up2)
         upconv_2_2 = Conv2D(256, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_2_1)
+        if(batchnorm): upconv_2_2 = BatchNormalization()(upconv_2_2)
         upconv_2_2 = Dropout(0.5)(upconv_2_2)
 
         # up3 = Conv2DTranspose(128, kernel_size=2, strides=(2,2), padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_2_2)
@@ -98,6 +105,7 @@ class EMA_Unet:
 
         upconv_3_1 = Conv2D(128, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up3)
         upconv_3_2 = Conv2D(128, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_3_1)
+        if(batchnorm): upconv_3_2 = BatchNormalization()(upconv_3_2)
         upconv_3_2 = Dropout(0.5)(upconv_3_2)
 
         # up4 = Conv2DTranspose(64, kernel_size=2, strides=(2,2), padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_3_2)
@@ -106,6 +114,7 @@ class EMA_Unet:
 
         upconv_4_1 = Conv2D(64, kernel_size=2, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(up4)
         upconv_4_2 = Conv2D(64, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_4_1)
+        if(batchnorm): upconv_4_2 = BatchNormalization()(upconv_4_2)
         upconv_4_2 = Dropout(0.5)(upconv_4_2)
         output = Conv2D(1, kernel_size=3, activation='sigmoid', padding='same', kernel_initializer=init, kernel_regularizer=reg)(upconv_4_2)
 

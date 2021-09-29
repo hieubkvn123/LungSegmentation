@@ -177,7 +177,7 @@ test_ratio = args['val_ratio']
 epochs = args['epochs'] 
 lr = args['lr']
 save_path = args['save_path']
-model = EMA_Unet(momentum=momentum)
+model = EMA_Unet(momentum=momentum, batchnorm=True)
 
 # Create data loader
 loader = DataLoader(data_dir, u_data_dir, batch_size, u_batch_size, test_ratio)
