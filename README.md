@@ -71,4 +71,5 @@ img = cv2.resize(img, (256, 256))
 segmenter.visualize_prediction(img)
 ```
 
-# III. Autoencoder for adaptive segmentation
+# III. Semi-supervised U-Net training inspired from Pi model
+![Semi supervised UNet diagram](./media/semi-supervised-unet-diagram.png)

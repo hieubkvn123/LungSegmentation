@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
 from tensorflow.keras.regularizers import l1, l2
 
 class EMA_Unet:
@@ -116,7 +117,8 @@ class EMA_Unet:
         upconv_4_2 = Conv2D(64, kernel_size=3, padding='same', activation='relu', kernel_initializer=init, kernel_regularizer=reg)(upconv_4_1)
         if(batchnorm): upconv_4_2 = BatchNormalization()(upconv_4_2)
         upconv_4_2 = Dropout(0.5)(upconv_4_2)
-        output = Conv2D(1, kernel_size=3, activation='sigmoid', padding='same', kernel_initializer=init, kernel_regularizer=reg)(upconv_4_2)
+        logits = Conv2D(1, kernel_size=3, activation=None, padding='same', kernel_initializer=init, kernel_regularizer=reg)(upconv_4_2)
+        output = Activation('sigmoid')(logits)
 
-        model = Model(inputs=inputs, outputs=output, name='UNet-Lung-Segmentation')
+        model = Model(inputs=inputs, outputs=[output, logits], name='UNet-Lung-Segmentation')
         return model

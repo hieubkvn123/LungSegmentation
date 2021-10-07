@@ -37,7 +37,7 @@ class GifCreator:
     def log_output(self, model):
         if(self.model is not None):
             self.counter += 1
-            output = self.model.predict(np.array([self.image]))
+            output, logits = self.model.predict(np.array([self.image]))
             output = output[0]
             output = output * 255.0
             output = output.astype(np.uint8)

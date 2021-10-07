@@ -21,8 +21,12 @@ for ext in extensions:
 image_paths = {x.split('/')[-1].split('.')[0] : x for x in image_paths}
 
 with tqdm.tqdm(total=len(image_paths)) as pbar:
-    for filename in sorted(image_paths):
+    for i, filename in enumerate(sorted(image_paths)):
         images.append(imageio.imread(image_paths[filename]))
+
+        if(i == len(image_paths) - 1):
+            for j in range(3 * args['fps']):
+                images.append(imageio.imread(image_paths[filename]))
         pbar.update(1)
 
 imageio.mimsave('gifs/output.gif', images, fps=args['fps'])

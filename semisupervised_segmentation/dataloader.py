@@ -97,7 +97,7 @@ class DataLoader:
         # Strongly augmented - random brightness and contrast
         seed = np.random.randint(1000)
         # strong_aug = tf.image.random_jpeg_quality(img, 0, 10, seed=seed)
-        strong_aug = tf.image.random_brightness(strong_aug, max_delta=0.5, seed=seed)
+        # strong_aug = tf.image.random_brightness(strong_aug, max_delta=0.5, seed=seed)
         # strong_aug = tf.image.random_saturation(strong_aug, 0.5, 1.0, seed)
         strong_aug = tf.keras.layers.GaussianNoise(10)(strong_aug)
         

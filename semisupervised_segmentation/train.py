@@ -30,7 +30,7 @@ def train_step(ema_model, opt, batch, step=1):
     consistency = 100.0
     consistency_rampup = 5
 
-    alpha = consistency * EMA_Unet.sigmoid_rampup(step, consistency_rampup)
+    alpha = 0.01 # consistency * EMA_Unet.sigmoid_rampup(step, consistency_rampup)
     
     bce = BinaryCrossentropy(from_logits=False)
     mse = MeanSquaredError()
@@ -39,13 +39,12 @@ def train_step(ema_model, opt, batch, step=1):
         weak_aug, strong_aug, masks = batch
 
         # 1. Calculate the classification loss
-        predicted_masks = ema_model.student(weak_aug, training=True)
+        predicted_masks, logits_weak = ema_model.student(weak_aug, training=True)
         cls_loss = bce(masks, predicted_masks)
 
         # 2. Calculate the consistency loss
-        pseudo_label = ema_model.teacher(weak_aug, training=False)
-        predicted_masks = ema_model.student(strong_aug, training=True)
-        consistency_loss = alpha * mse(pseudo_label, predicted_masks)
+        predicted_masks, logits_strong = ema_model.student(strong_aug, training=True)
+        consistency_loss = alpha * mse(logits_weak, logits_strong)
 
         # 3. Overall loss
         loss = cls_loss + alpha * consistency_loss
@@ -62,15 +61,15 @@ def train_step_unsupervised(ema_model, opt, batch, step, alpha=0.005):
     consistency = 100.0
     consistency_rampup = 5
 
-    alpha = consistency * EMA_Unet.sigmoid_rampup(step, consistency_rampup)
+    alpha = 0.01 # consistency * EMA_Unet.sigmoid_rampup(step, consistency_rampup)
 
     with tf.GradientTape() as tape:
         mse = MeanSquaredError()
         strong_aug, weak_aug = batch
 
-        pseudo_label = ema_model.teacher(weak_aug, training=False)
-        predicted_masks = ema_model.student(strong_aug, training=True)
-        loss = alpha * mse(pseudo_label, predicted_masks)
+        pseudo_label, logits_weak = ema_model.student(weak_aug, training=True)
+        predicted_mask, logits_strong = ema_model.student(strong_aug, training=True)
+        loss = alpha * mse(logits_weak, logits_strong)
 
         gradients = tape.gradient(loss, ema_model.student.trainable_variables)
     opt.apply_gradients(zip(gradients, ema_model.student.trainable_variables))
@@ -82,7 +81,7 @@ def val_step(model, batch):
     bce = BinaryCrossentropy(from_logits=False)
     images, _, masks = batch
     
-    predictions = model(images, training=False)
+    predictions, logits = model(images, training=False)
     loss = bce(masks, predictions)
 
     return loss
@@ -115,7 +114,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
                 pbar.update(1)
 
                 # EMA update after supervised learning
-                model.update_ema_params(global_step, ema=ema)
+                # model.update_ema_params(global_step, ema=ema)
 
         ### Run through unsupervised data directory ###
         if(u_dataset is not None):
@@ -129,7 +128,7 @@ def train(model, train_dataset, val_dataset, u_dataset=None, save_path='checkpoi
                     pbar.update(1)
 
                     # EMA update after unsupervised learning
-                    model.update_ema_params(global_step, ema=ema)
+                    # model.update_ema_params(global_step, ema=ema)
            
         ### Run through val supervised data directory ###
         with tqdm.tqdm(total=val_steps, colour='green') as pbar:
