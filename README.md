@@ -82,8 +82,8 @@ python3 train.py --data <path_to_labelled_data_dir> --u-data <path_to_unlabelled
 ```
 
 Where:
-	* path_to_labelled_data_dir : Path to the labelled lung dataset with "images" and "masks" sub-directories.
-	* path_to_unlabelled_data_dir : Path to the unlabelled lung dataset containing image files of lung x-ray images (png, jpeg, ...)
+    * path_to_labelled_data_dir : Path to the labelled lung dataset with "images" and "masks" sub-directories.
+    * path_to_unlabelled_data_dir : Path to the unlabelled lung dataset containing image files of lung x-ray images (png, jpeg, ...)
 
 
 
