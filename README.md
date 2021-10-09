@@ -2,7 +2,7 @@
 This repository attempts to perform lung segmentation on chest x-ray images using purely image preprocessing and deep learning approaches like U-Net. The segmentation of lung regions can be later used to perform abnomaly detection on chest x-ray regions
 
 # I. Lung segmentation with image preprocessing approach.
-This repository makes use of the preprocessing pipeline suggested by the "Lung boundary detection for chest X-ray images classification based on GLCM and probabilistic neural networks" paper ([Link](https://www.sciencedirect.com/science/article/pii/S1877050919315145) ).
+This repository makes use of the preprocessing pipeline suggested by the "Lung boundary detection for chest X-ray images classification based on GLCM and probabilistic neural networks" paper ([Link](https://www.sciencedirect.com/science/article/pii/S1877050919315145)).
 
 ### 1. Preprocessing pipeline
 ![Preprocessing pipeline](./media/lungseg_pipeline.png)
@@ -72,4 +72,18 @@ segmenter.visualize_prediction(img)
 ```
 
 # III. Semi-supervised U-Net training inspired from Pi model
+The semi-supervised training method for U-Net is inspired by the Pi model mentioned in the "Temporal Ensembling for Semi-Supervised Learning" paper ([Link](https://arxiv.org/abs/1610.02242)). For both labelled and unlabelled data batches, the images will be weakly and strongly augmented. The weak and strong augmentations will be fed into the network for segmentation mask prediction. The predictions of both streams will then be used to calculate the consistency loss (mean squared error). The motivation is to make the network generalize and be indifferent to minor changes in the image data.
 ![Semi supervised UNet diagram](./media/semi-supervised-unet-diagram.png)
+
+To start training U-Net for lung segmentation in a semi-supervised manner:
+```console
+cd semisupervised_segmentation
+python3 train.py --data <path_to_labelled_data_dir> --u-data <path_to_unlabelled_data_dir>
+```
+
+Where:
+	* path_to_labelled_data_dir : Path to the labelled lung dataset with "images" and "masks" sub-directories.
+	* path_to_unlabelled_data_dir : Path to the unlabelled lung dataset containing image files of lung x-ray images (png, jpeg, ...)
+
+
+
