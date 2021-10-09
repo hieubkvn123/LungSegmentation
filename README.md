@@ -81,7 +81,7 @@ cd semisupervised_segmentation
 python3 train.py --data <path_to_labelled_data_dir> --u-data <path_to_unlabelled_data_dir>
 ```
 
-Where:
-    * path_to_labelled_data_dir : Path to the labelled lung dataset with "images" and "masks" sub-directories.
-    * path_to_unlabelled_data_dir : Path to the unlabelled lung dataset containing image files of lung x-ray images (png, jpeg, ...).
+Where :
+   * "path_to_labelled_data_dir" is the data directory containing two sub-directories "images" and "masks". 
+   * "path_to_unlabelled_data_dir" is the directory to lung x-ray images data without labels (png, jpeg, ...)
 
